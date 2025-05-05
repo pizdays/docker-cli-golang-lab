@@ -1,0 +1,44 @@
+# Use golang:1.23-alpine as the base image for both building and running
+FROM golang:1.23-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Set environment variables to cross-compile for Linux amd64
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+# Install necessary dependencies for Alpine (if needed for your app)
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    bash
+
+# Set environment variable for Chromium path (if using Chromium)
+ENV CHROME_BIN=/usr/bin/chromium-browser
+
+# Copy the Go module files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the application source code
+COPY . .
+
+# Build the Go binary for Linux amd64
+RUN go build -o myapp .
+
+# Copy the .env file from the local environment to the container
+COPY ./env_stage .env
+
+# Ensure the Go binary is executable
+RUN chmod +x /app/myapp
+
+# Set entrypoint to run the Go binary
+ENTRYPOINT ["/app/myapp"]
+
+# Expose a port (if needed)
+EXPOSE 8080

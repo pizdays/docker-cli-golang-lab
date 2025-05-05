@@ -1,0 +1,27 @@
+# Database
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_DATABASE=
+
+JWT_SECRET=
+#test
+# Storage
+STORAGE_IP=
+
+#MongoDb
+MONGODB_URI
+MONGODB_DB=d
+
+
+# EXP logs in days
+LOG_ERROR_EXP = 3
+LOG_INFO_EXP = 7
+
+STORAGES_FOLDER_INFO_PATH = storages/logs/info
+STORAGES_FOLDER_ERROR_PATH = storages/logs/error
+
+
+ENV=staging
+TEST=false
