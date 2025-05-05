@@ -9,6 +9,7 @@ import (
 	"github.com/docker-cli-golang-lab/src/dockerAPIManagement/domains"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/system"
 )
 
@@ -54,17 +55,17 @@ func (u *UseCase) ListContainers(ctx context.Context, options container.ListOpti
 	return containers, nil
 }
 
-// func (u *UseCase) ListImages(ctx context.Context, options image.ListOptions) ([]image.Summary, error) {
+func (u *UseCase) ListImages(ctx context.Context, options image.ListOptions) ([]image.Summary, error) {
 	
 	
 	
-// 	images, err := u.DockerService.ListImages(ctx, options)
-// 	if err != nil {
-// 		log.Printf("Usecase Error ListImages: %v", err)
-// 		return nil, fmt.Errorf("failed to list images: %w", err)
-// 	}
-// 	return images, nil
-// }
+	images, err := u.DockerService.ListImages(ctx, options)
+	if err != nil {
+		log.Printf("Usecase Error ListImages: %v", err)
+		return nil, fmt.Errorf("failed to list images: %w", err)
+	}
+	return images, nil
+}
 
 
 
