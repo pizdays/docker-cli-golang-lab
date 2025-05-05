@@ -12,6 +12,7 @@ import (
 	// NewRepositoryHandler
 	// ""gitlab.com/dol-api-service/src/volumeAadt/usecases
 
+	"github.com/docker/docker/client"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -72,15 +73,41 @@ func SetupRouter() *gin.Engine {
 
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// Initialize Docker client
+	dockerClient, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		panic(err)
+	}
+
 	// middlewares.AuthorizeJWT()
 	v1 := selectAPIPath(r, os.Getenv("ENV"))
 	{
 
 		dockerAPIManagement := v1.Group("/docker")
 		{
-			handler := dockerAPIManagementRepo.NewRepositoryHandler(databases.DB)
+			handler := dockerAPIManagementRepo.NewRepositoryHandler(databases.DB, dockerClient)
 
-			dockerAPIManagement.POST("", handler.CreateService)
+			dockerAPIManagement.GET("/info", handler.GetInfo)
+			dockerAPIManagement.GET("/version", handler.GetVersion)
+
+			
+		// 	dockerAPIManagement.GET("/containers", handler.ListContainersHandler)
+		// 	dockerAPIManagement.POST("/containers", handler.CreateContainerHandler) // Create and optionally Start
+		// 	dockerAPIManagement.POST("/containers/:id/stop", handler.StopContainerHandler)
+		// dockerAPIManagement.DELETE("/containers/:id", dockerHahandlerndlers.RemoveContainerHandler)
+
+		// // dockerGroup.GET("/images", dockerHandlers.ListImagesHandler) // Need handler
+		// dockerAPIManagement.POST("/images/pull", handler.PullImageHandler)
+
+		// dockerAPIManagement.POST("/containers/:id/exec", handler.ExecContainerHandler) // Non-interactive Exec
+		// dockerAPIManagement.GET("/containers/:id/logs", handler.ContainerLogsHandler) // Non-streaming Logs
+
+		// dockerGroup.POST("/networks", dockerHandlers.CreateNetworkHandler) // Need handlers
+		// dockerGroup.POST("/volumes", dockerHandlers.CreateVolumeHandler) // Need handlers
+
+		// dockerGroup.POST("/deploy-stack", dockerHandlers.DeployStackHandler) // Project API example
+
+
 
 		}
 
