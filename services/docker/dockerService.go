@@ -21,7 +21,7 @@ type dockerService struct {
 var _ DockerDomain = (*dockerService)(nil)
 
 func NewDockerService(cli *client.Client) DockerDomain {
-	return &dockerService{ cli: cli }
+	return &dockerService{cli: cli}
 }
 
 // Implementations (ตัวอย่างบางส่วน)
@@ -34,7 +34,7 @@ func (s *dockerService) GetVersion(ctx context.Context) (types.Version, error) {
 	return s.cli.ServerVersion(ctx)
 }
 
-func (s *dockerService) ListContainers(ctx context.Context, options container.ListOptions) ([]types.Container, error) {
+func (s *dockerService) ListContainers(ctx context.Context, options container.ListOptions) ([]container.Summary, error) {
 	return s.cli.ContainerList(ctx, options)
 }
 
@@ -85,7 +85,7 @@ func (s *dockerService) RemoveContainer(ctx context.Context, containerID string,
 	return s.cli.ContainerRemove(ctx, containerID, options)
 }
 
-func (s *dockerService) ExecContainerCreate(ctx context.Context, containerID string, config container.ExecOptions) (types.IDResponse, error) {
+func (s *dockerService) ExecContainerCreate(ctx context.Context, containerID string, config container.ExecOptions) (container.ExecCreateResponse, error) {
 	return s.cli.ContainerExecCreate(ctx, containerID, config)
 }
 

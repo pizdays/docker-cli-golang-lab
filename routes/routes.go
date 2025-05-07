@@ -7,6 +7,7 @@ import (
 	databases "github.com/docker-cli-golang-lab/databases"
 	_ "github.com/docker-cli-golang-lab/docs"
 	dockerAPIManagementRepo "github.com/docker-cli-golang-lab/src/dockerAPIManagement/repositories"
+	userRepo "github.com/docker-cli-golang-lab/src/users/repositories"
 	"github.com/gin-contrib/gzip"
 
 	// NewRepositoryHandler
@@ -14,6 +15,7 @@ import (
 
 	"github.com/docker/docker/client"
 	"github.com/gin-gonic/gin"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -82,7 +84,6 @@ func SetupRouter() *gin.Engine {
 	// middlewares.AuthorizeJWT()
 	v1 := selectAPIPath(r, os.Getenv("ENV"))
 	{
-
 		dockerAPIManagement := v1.Group("/docker")
 		{
 			handler := dockerAPIManagementRepo.NewRepositoryHandler(databases.DB, dockerClient)
@@ -90,27 +91,38 @@ func SetupRouter() *gin.Engine {
 			dockerAPIManagement.GET("/info", handler.GetInfo)
 			dockerAPIManagement.GET("/version", handler.GetVersion)
 
-			
-		// 	dockerAPIManagement.GET("/containers", handler.ListContainersHandler)
-		// 	dockerAPIManagement.POST("/containers", handler.CreateContainerHandler) // Create and optionally Start
-		// 	dockerAPIManagement.POST("/containers/:id/stop", handler.StopContainerHandler)
-		// dockerAPIManagement.DELETE("/containers/:id", dockerHahandlerndlers.RemoveContainerHandler)
+			// 	dockerAPIManagement.GET("/containers", handler.ListContainersHandler)
+			// 	dockerAPIManagement.POST("/containers", handler.CreateContainerHandler) // Create and optionally Start
+			// 	dockerAPIManagement.POST("/containers/:id/stop", handler.StopContainerHandler)
+			// dockerAPIManagement.DELETE("/containers/:id", dockerHahandlerndlers.RemoveContainerHandler)
 
-		// // dockerGroup.GET("/images", dockerHandlers.ListImagesHandler) // Need handler
-		// dockerAPIManagement.POST("/images/pull", handler.PullImageHandler)
+			// // dockerGroup.GET("/images", dockerHandlers.ListImagesHandler) // Need handler
+			// dockerAPIManagement.POST("/images/pull", handler.PullImageHandler)
 
-		// dockerAPIManagement.POST("/containers/:id/exec", handler.ExecContainerHandler) // Non-interactive Exec
-		// dockerAPIManagement.GET("/containers/:id/logs", handler.ContainerLogsHandler) // Non-streaming Logs
+			// dockerAPIManagement.POST("/containers/:id/exec", handler.ExecContainerHandler) // Non-interactive Exec
+			// dockerAPIManagement.GET("/containers/:id/logs", handler.ContainerLogsHandler) // Non-streaming Logs
 
-		// dockerGroup.POST("/networks", dockerHandlers.CreateNetworkHandler) // Need handlers
-		// dockerGroup.POST("/volumes", dockerHandlers.CreateVolumeHandler) // Need handlers
+			// dockerGroup.POST("/networks", dockerHandlers.CreateNetworkHandler) // Need handlers
+			// dockerGroup.POST("/volumes", dockerHandlers.CreateVolumeHandler) // Need handlers
 
-		// dockerGroup.POST("/deploy-stack", dockerHandlers.DeployStackHandler) // Project API example
-
-
-
+			// dockerGroup.POST("/deploy-stack", dockerHandlers.DeployStackHandler) // Project API example
 		}
 
+		// ลงทะเบียน route ในระดับ v1 ด้วย
+
+		// สร้าง handler ตรงๆ จาก repository เหมือน docker API
+		userHandler := userRepo.NewRepositoryHandler(databases.DB)
+
+		// ลงทะเบียน routes ที่ระดับ root
+		apiUsers := v1.Group("/users")
+		{
+			apiUsers.GET("", userHandler.GetUsers)
+			// apiUsers.GET("/:id", userHandler.GetUserByID)
+			// apiUsers.POST("", userHandler.CreateUser)
+			// apiUsers.PUT("/:id", userHandler.UpdateUser)
+			// apiUsers.DELETE("/:id", userHandler.DeleteUser)
+			// apiUsers.POST("/login", userHandler.Login)
+		}
 
 	}
 	return r

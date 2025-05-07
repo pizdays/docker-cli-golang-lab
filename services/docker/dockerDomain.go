@@ -15,7 +15,7 @@ import (
 type DockerDomain interface {
 	GetInfo(ctx context.Context) (system.Info, error)
 	GetVersion(ctx context.Context) (types.Version, error)
-	ListContainers(ctx context.Context, options container.ListOptions) ([]types.Container, error)
+	ListContainers(ctx context.Context, options container.ListOptions) ([]container.Summary, error)
 	ListImages(ctx context.Context, options image.ListOptions) ([]image.Summary, error)
 
 	BuildImage(ctx context.Context, options types.ImageBuildOptions) (io.ReadCloser, error)

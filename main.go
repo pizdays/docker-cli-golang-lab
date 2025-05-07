@@ -26,23 +26,23 @@ func main() {
 		log.Fatalf("Some error occured. Err: %s", err)
 	}
 
-
 	logs.InitLogger()
 	logs.InitLoggerRequest()
 	defer logs.CloseLogReq()
 	defer logs.Close()
 
-
 	// 1. Create Docker Client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil { log.Fatalf("Failed to create Docker client: %v", err) }
+	if err != nil {
+		log.Fatalf("Failed to create Docker client: %v", err)
+	}
 	defer cli.Close()
 
 	_, err = cli.Ping(context.Background())
-	if err != nil { log.Fatalf("Failed to connect to Docker daemon: %v", err) }
+	if err != nil {
+		log.Fatalf("Failed to connect to Docker daemon: %v", err)
+	}
 	log.Println("Connected to Docker daemon.")
-
-
 
 	// DB_HOST := os.Getenv("DB_HOST")
 	// DB_DATABASE := os.Getenv("DB_DATABASE")
