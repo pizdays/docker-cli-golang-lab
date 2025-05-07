@@ -91,12 +91,12 @@ func SetupRouter() *gin.Engine {
 			dockerAPIManagement.GET("/info", handler.GetInfo)
 			dockerAPIManagement.GET("/version", handler.GetVersion)
 
-			// 	dockerAPIManagement.GET("/containers", handler.ListContainersHandler)
+			dockerAPIManagement.GET("/containers", handler.ListContainers)
 			// 	dockerAPIManagement.POST("/containers", handler.CreateContainerHandler) // Create and optionally Start
 			// 	dockerAPIManagement.POST("/containers/:id/stop", handler.StopContainerHandler)
 			// dockerAPIManagement.DELETE("/containers/:id", dockerHahandlerndlers.RemoveContainerHandler)
 
-			// // dockerGroup.GET("/images", dockerHandlers.ListImagesHandler) // Need handler
+			dockerAPIManagement.GET("/images", handler.ListImages) // Need handler
 			// dockerAPIManagement.POST("/images/pull", handler.PullImageHandler)
 
 			// dockerAPIManagement.POST("/containers/:id/exec", handler.ExecContainerHandler) // Non-interactive Exec
@@ -117,12 +117,17 @@ func SetupRouter() *gin.Engine {
 		apiUsers := v1.Group("/users")
 		{
 			apiUsers.GET("", userHandler.GetUsers)
-			// apiUsers.GET("/:id", userHandler.GetUserByID)
-			// apiUsers.POST("", userHandler.CreateUser)
-			// apiUsers.PUT("/:id", userHandler.UpdateUser)
-			// apiUsers.DELETE("/:id", userHandler.DeleteUser)
-			// apiUsers.POST("/login", userHandler.Login)
+			apiUsers.GET("/:id", userHandler.GetUserByID)
+			apiUsers.POST("", userHandler.CreateUser)
+			apiUsers.PUT("/:id", userHandler.UpdateUser)
+			apiUsers.DELETE("/:id", userHandler.DeleteUser)
+			apiUsers.POST("/login", userHandler.Login)
 		}
+
+		// apiCalculate := v1.Group("/calculate")
+		// {
+		// 	apiCalculate.POST("/area", userHandler.CalculateArea)
+		// }
 
 	}
 	return r

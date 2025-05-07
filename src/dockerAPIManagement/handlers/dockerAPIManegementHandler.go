@@ -6,6 +6,7 @@ import (
 	"github.com/docker-cli-golang-lab/src/dockerAPIManagement/domains"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +21,15 @@ func NewHandler(UseCase domains.UseCase) *Handler {
 		UseCase: UseCase,
 	}
 }
+
+// GetInfo
+// @Summary Get Docker info
+// @Description Get information about the Docker daemon
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.SystemInfo
+// @Failure 500 {object} map[string]string "error"
+// @Router /api/v1/docker/info [get]
 func (h *Handler) GetInfo(c *gin.Context) {
 	info, err := h.UseCase.GetInfo(c.Request.Context())
 	if err != nil {
@@ -28,12 +38,20 @@ func (h *Handler) GetInfo(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"info": info,
 	})
 }
 
+// GetVersion
+// @Summary Get Docker version
+// @Description Get the version of the Docker daemon
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Version
+// @Failure 500 {object} map[string]string "error"
+// @Router /api/v1/docker/version [get]
 func (h *Handler) GetVersion(c *gin.Context) {
 	version, err := h.UseCase.GetVersion(c.Request.Context())
 	if err != nil {
@@ -42,12 +60,20 @@ func (h *Handler) GetVersion(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"version": version,
 	})
- }
+}
 
+// ListContainers
+// @Summary List all containers
+// @Description Get a list of all containers
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.ContainerSummary
+// @Failure 500 {object} map[string]string "error"
+// @Router /api/v1/docker/containers [get]
 func (h *Handler) ListContainers(c *gin.Context) {
 	containers, err := h.UseCase.ListContainers(c.Request.Context(), container.ListOptions{})
 	if err != nil {
@@ -56,12 +82,20 @@ func (h *Handler) ListContainers(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"containers": containers,
 	})
 }
 
+// ListImages
+// @Summary List all images
+// @Description Get a list of all images
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.ImageSummary
+// @Failure 500 {object} map[string]string "error"
+// @Router /api/v1/docker/images [get]
 func (h *Handler) ListImages(c *gin.Context) {
 	images, err := h.UseCase.ListImages(c.Request.Context(), image.ListOptions{})
 	if err != nil {
@@ -70,13 +104,11 @@ func (h *Handler) ListImages(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"images": images,
 	})
 }
-
-
 
 // func (h *Handler) CreateContainer(c *gin.Context) {
 // 	var request struct {
@@ -84,14 +116,14 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		HostConfig    *container.HostConfig `json:"host_config"`
 // 		ContainerName string               `json:"container_name"`
 // 	}
-	
+
 // 	if err := c.ShouldBindJSON(&request); err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"error": err.Error(),
 // 		})
 // 		return
 // 	}
-	
+
 // 	response, err := h.UseCase.CreateContainer(c.Request.Context(), request.Config, request.HostConfig, request.ContainerName)
 // 	if err != nil {
 // 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -99,7 +131,7 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		})
 // 		return
 // 	}
-	
+
 // 	c.JSON(http.StatusCreated, gin.H{
 // 		"container": response,
 // 	})
@@ -113,7 +145,7 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		})
 // 		return
 // 	}
-	
+
 // 	var options container.RemoveOptions
 // 	if err := c.ShouldBindQuery(&options); err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
@@ -121,14 +153,14 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		})
 // 		return
 // 	}
-	
+
 // 	if err := h.UseCase.RemoveContainer(c.Request.Context(), containerID, options); err != nil {
 // 		c.JSON(http.StatusInternalServerError, gin.H{
 // 			"error": err.Error(),
 // 		})
 // 		return
 // 	}
-	
+
 // 	c.JSON(http.StatusOK, gin.H{
 // 		"message": "Container removed successfully",
 // 	})
@@ -139,14 +171,14 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		Reference string            `json:"reference" binding:"required"`
 // 		Options   image.PullOptions `json:"options"`
 // 	}
-	
+
 // 	if err := c.ShouldBindJSON(&request); err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"error": err.Error(),
 // 		})
 // 		return
 // 	}
-	
+
 // 	reader, err := h.UseCase.PullImage(c.Request.Context(), request.Reference, request.Options)
 // 	if err != nil {
 // 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -155,10 +187,10 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		return
 // 	}
 // 	defer reader.Close()
-	
+
 // 	c.Writer.Header().Set("Content-Type", "application/json")
 // 	c.Status(http.StatusOK)
-	
+
 // 	// Stream the response directly to the client
 // 	_, err = io.Copy(c.Writer, reader)
 // 	if err != nil {
@@ -170,14 +202,14 @@ func (h *Handler) ListImages(c *gin.Context) {
 
 // func (h *Handler) BuildImage(c *gin.Context) {
 // 	var options types.ImageBuildOptions
-	
+
 // 	if err := c.ShouldBindJSON(&options); err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"error": err.Error(),
 // 		})
 // 		return
 // 	}
-	
+
 // 	reader, err := h.UseCase.BuildImage(c.Request.Context(), options)
 // 	if err != nil {
 // 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -186,10 +218,10 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		return
 // 	}
 // 	defer reader.Close()
-	
+
 // 	c.Writer.Header().Set("Content-Type", "application/json")
 // 	c.Status(http.StatusOK)
-	
+
 // 	// Stream the response directly to the client
 // 	_, err = io.Copy(c.Writer, reader)
 // 	if err != nil {
@@ -202,14 +234,14 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		Reference string            `json:"reference" binding:"required"`
 // 		Options   image.PushOptions `json:"options"`
 // 	}
-	
+
 // 	if err := c.ShouldBindJSON(&request); err != nil {
 // 		c.JSON(http.StatusBadRequest, gin.H{
 // 			"error": err.Error(),
 // 		})
 // 		return
 // 	}
-	
+
 // 	reader, err := h.UseCase.PushImage(c.Request.Context(), request.Reference, request.Options)
 // 	if err != nil {
 // 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -218,17 +250,16 @@ func (h *Handler) ListImages(c *gin.Context) {
 // 		return
 // 	}
 // 	defer reader.Close()
-	
+
 // 	c.Writer.Header().Set("Content-Type", "application/json")
 // 	c.Status(http.StatusOK)
-	
+
 // 	// Stream the response directly to the client
 // 	_, err = io.Copy(c.Writer, reader)
 // 	if err != nil {
 // 		log.Printf("Error streaming push image response: %v", err)
 // 	}
 // }
-
 
 // func (h *Handler) CreateService(c *gin.Context) {
 // 	return
@@ -241,5 +272,3 @@ func (h *Handler) ListImages(c *gin.Context) {
 // func (h *Handler) DeleteService(c *gin.Context) {
 // 	return
 // }
-
-
